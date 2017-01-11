@@ -6,16 +6,20 @@ import com.jogamp.opengl.GLEventListener;
 
 public class GravityCanvas extends GLCanvas implements GLEventListener {
 
-  public void display(GLAutoDrawable glDrawable) {
-  }
+    @Override
+    public void display(GLAutoDrawable glDrawable) {
+    }
 
-  public void displayChanged(GLAutoDrawable gLDrawable, boolean modeChanged, boolean deviceChanged) {
-  }
+    @Override
+    public void init(GLAutoDrawable gLDrawable) {
+    }
 
-  public void init(GLAutoDrawable gLDrawable) {
-  }
+    @Override
+    public void dispose(GLAutoDrawable glAutoDrawable) {
 
-  public void reshape(GLAutoDrawable gLDrawable, int x, int y, int width, int height) {
-  }
+    }
+
+    public void reshape(GLAutoDrawable gLDrawable, int x, int y, int width, int height) {
+    }
 
 }

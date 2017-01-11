@@ -6,11 +6,11 @@ import java.awt.event.ActionEvent;
 
 public class MainFrame extends JFrame implements ActionListener {
 
-  public MainFrame() {
-  }
+    public MainFrame() {
+    }
 
-  @Override
-  public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-  }
+    }
 }
