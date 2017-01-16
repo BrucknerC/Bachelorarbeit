@@ -23,6 +23,8 @@ public class Physics {
      */
     public static final BigDecimal G = new BigDecimal(new BigInteger("667408"), 16);
 
+    public static final BigDecimal AU = new BigDecimal(149_597_870_700L);
+
     /**
      * Calculates the gravitational force between two bodies.
      * <p>
@@ -34,13 +36,16 @@ public class Physics {
      * @return The gravitational force represented as a {@link Vector3D}.
      */
     public static Vector3D calculateGravity(Body body1, Body body2) {
-        Vector3D distance = body2.getPosition().subtract(body1.getPosition());
-        return distance.unify().scale(
+        Vector3D distance = body2.getPosition();
+        distance.subtract(body1.getPosition());
+        distance.unify();
+        distance.scale(
                 G.multiply(body1.getMass())
                         .multiply(body2.getMass())
                         .divide(
                                 distance.length().pow(2),
                                 RoundingMode.HALF_UP)
         );
+        return distance;
     }
 }

@@ -1,8 +1,11 @@
 package gravitysandbox.physics;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import gravitysandbox.util.Vector3D;
+
+// TODO: Documentation
 
 /**
  * The representation of a physical body with its name, position, velocity and mass.
@@ -29,12 +32,18 @@ public class Body {
     private Vector3D velocity;
 
     /**
+     * A list of previous locations.
+     */
+    private ArrayList<Vector3D> previousLocations;
+
+    /**
      * The current mass of the body represented as a {@link BigDecimal}.
      */
     private BigDecimal mass;
 
     /**
      * Creates a new Body object based on given starting position, velocity and mass.
+     * @param name The starting name.
      * @param position The starting position.
      * @param velocity The starting velocity.
      * @param mass The starting mass.
@@ -42,8 +51,9 @@ public class Body {
     public Body(String name, Vector3D position, Vector3D velocity, BigDecimal mass) {
         setName(name);
         setPosition(position);
-        setPosition(velocity);
+        setVelocity(velocity);
         setMass(mass);
+        previousLocations = new ArrayList<>();
     }
 
     /**
@@ -109,5 +119,13 @@ public class Body {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void addPreviousLocation(Vector3D location) {
+
+    }
+
+    public ArrayList<Vector3D> getPreviousLocations() {
+        return previousLocations;
     }
 }

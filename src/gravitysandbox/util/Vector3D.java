@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+// TODO: Documentation
 /**
  * A three dimensional vector using {@link BigDecimal} for arbitrary precision values with support for the most common vector operations.
  *
@@ -32,7 +33,7 @@ public class Vector3D {
      * Creates a new instance of Vector3D with value of (1, 1, 1).
      */
     public Vector3D() {
-        this.x = this.y = this.z = new BigDecimal(BigInteger.ONE);
+        this.x = this.y = this.z = new BigDecimal(BigInteger.ZERO);
     }
 
     /**
@@ -65,10 +66,10 @@ public class Vector3D {
      *
      * @param vector The vector to be added.
      */
-    public void add(Vector3D vector) {
-        setX(getX().add(vector.getX()));
-        setY(getY().add(vector.getY()));
-        setZ(getZ().add(vector.getZ()));
+    public Vector3D add(Vector3D vector) {
+        return new Vector3D(getX().add(vector.getX()),
+        getY().add(vector.getY()),
+        getZ().add(vector.getZ()));
     }
 
     /**
@@ -76,10 +77,10 @@ public class Vector3D {
      *
      * @param vector The vector to be subtracted.
      */
-    public void subtract(Vector3D vector) {
-        setX(getX().subtract(vector.getX()));
-        setY(getY().subtract(vector.getY()));
-        setZ(getZ().subtract(vector.getZ()));
+    public Vector3D subtract(Vector3D vector) {
+        return new Vector3D(getX().subtract(vector.getX()),
+        getY().subtract(vector.getY()),
+        getZ().subtract(vector.getZ()));
     }
 
     /**
@@ -110,11 +111,11 @@ public class Vector3D {
     /**
      * Scales the vector to a length of 1.
      */
-    public void unify() {
+    public Vector3D unify() {
         BigDecimal length = length();
-        setX(getX().divide(length, RoundingMode.HALF_UP));
-        setY(getY().divide(length, RoundingMode.HALF_UP));
-        setZ(getZ().divide(length, RoundingMode.HALF_UP));
+        return new Vector3D(getX().divide(length, RoundingMode.HALF_UP),
+                getY().divide(length, RoundingMode.HALF_UP),
+                getZ().divide(length, RoundingMode.HALF_UP));
     }
 
     /**
@@ -122,16 +123,14 @@ public class Vector3D {
      *
      * @param scalar The scalar used for scaling.
      */
-    public void scale(BigDecimal scalar) {
-        setX(getX().multiply(scalar));
-        setY(getY().multiply(scalar));
-        setZ(getZ().multiply(scalar));
+    public Vector3D scale(BigDecimal scalar) {
+        return new Vector3D(getX().multiply(scalar), getY().multiply(scalar), getZ().multiply(scalar));
     }
 
     /**
      * Setter for x.
      *
-     * @param x
+     * @param x The new value for x.
      */
     public void setX(BigDecimal x) {
         this.x = x;
@@ -149,7 +148,7 @@ public class Vector3D {
     /**
      * Setter for y.
      *
-     * @param y
+     * @param y The new value for y.
      */
     public void setY(BigDecimal y) {
         this.y = y;
@@ -167,7 +166,7 @@ public class Vector3D {
     /**
      * Setter for z.
      *
-     * @param z
+     * @param z The new value for z.
      */
     public void setZ(BigDecimal z) {
         this.z = z;
