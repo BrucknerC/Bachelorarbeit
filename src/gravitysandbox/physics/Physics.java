@@ -39,7 +39,7 @@ public class Physics {
                 G.multiply(body1.getMass())
                         .multiply(body2.getMass())
                         .divide(
-                                distance.abs().pow(2),
+                                distance.length().pow(2),
                                 RoundingMode.HALF_UP)
         );
     }
