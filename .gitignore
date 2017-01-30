@@ -30,6 +30,7 @@
 /out/
 
 /libs/
+!/libs/BigDecimalMath.jar
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

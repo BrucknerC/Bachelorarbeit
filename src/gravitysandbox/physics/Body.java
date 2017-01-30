@@ -32,6 +32,11 @@ public class Body {
     private Vector3D velocity;
 
     /**
+     * The current force acting on the body.
+     */
+    private Vector3D force;
+
+    /**
      * A list of previous locations.
      */
     private ArrayList<Vector3D> previousLocations;
@@ -54,6 +59,7 @@ public class Body {
         setVelocity(velocity);
         setMass(mass);
         previousLocations = new ArrayList<>();
+        force = new Vector3D();
     }
 
     /**
@@ -70,6 +76,7 @@ public class Body {
      * @param position The new value for the position of the body.
      */
     public void setPosition(Vector3D position) {
+        addPreviousLocation(this.position);
         this.position = position;
     }
 
@@ -127,5 +134,17 @@ public class Body {
 
     public ArrayList<Vector3D> getPreviousLocations() {
         return previousLocations;
+    }
+
+    public void clearForce() {
+        force = new Vector3D();
+    }
+
+    public Vector3D getForce() {
+        return force;
+    }
+
+    public void setForce(Vector3D force) {
+        this.force = force;
     }
 }

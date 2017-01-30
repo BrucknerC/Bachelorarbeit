@@ -15,6 +15,7 @@ import gravitysandbox.util.Vector3D;
 import java.math.BigDecimal;
 
 import static java.math.RoundingMode.HALF_UP;
+import static org.nevec.rjm.BigDecimalMath.*;
 
 public class GravityCanvas extends GLCanvas implements GLEventListener {
 
@@ -24,6 +25,8 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
     private BodyConainer bodyConainer;
     private Matrix2D<Vector3D> bodyMatrix;
     private BigDecimal simSpeed;
+    private double zoomLevel;
+    private int I = 0;
 
     public GravityCanvas() {
         super();
@@ -53,21 +56,21 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
 
             /*
             System.out.println(body.getName());
-            System.out.println(body.getPosition().getX().divide(Physics.AU, HALF_UP).doubleValue());
-            System.out.println(body.getPosition().getY().divide(Physics.AU, HALF_UP).doubleValue());
-            System.out.println(body.getPosition().getZ().divide(Physics.AU, HALF_UP).doubleValue());
-            System.out.println(body.getMass().movePointRight(body.getMass().scale()-5).doubleValue());
+            System.out.println(body.getPosition().getX().divide(Physics.AU, UNLIMITED).doubleValue());
+            System.out.println(body.getPosition().getY().divide(Physics.AU, UNLIMITED).doubleValue());
+            System.out.println(body.getPosition().getZ().divide(Physics.AU, UNLIMITED).doubleValue());
+            /*System.out.println(body.getMass().movePointRight(body.getMass().scale()-5).doubleValue());
             */
 
-            glut.glutSolidSphere(body.getMass().movePointRight(body.getMass().scale()-5).doubleValue(),50,50);
+            glut.glutSolidSphere(Math.pow(log(body.getMass()).doubleValue(), 2) * zoomLevel,50,50);
 
             gl.glPopMatrix();
-            /*
+
             gl.glBegin(GL2.GL_LINES);
             for(Vector3D point : body.getPreviousLocations()) {
                 gl.glVertex3d(point.getX().doubleValue(), point.getY().doubleValue(), point.getZ().doubleValue());
             }
-            gl.glEnd();*/
+            gl.glEnd();
         }
 
         if (getAnimator().isStarted())
@@ -82,8 +85,9 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
         glu = new GLU();
         glut = new GLUT();
         bodyConainer = BodyConainer.getInstance();
-        simSpeed = new BigDecimal("0.1");
+        simSpeed = new BigDecimal("86400");
         bodyMatrix = new Matrix2D<>();
+        zoomLevel = 0.000025;
     }
 
     @Override
@@ -112,8 +116,13 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
     }
 
     private void animate() {
-        Body body1;
-        Body body2;
+        Body body1, body2;
+        Vector3D vForce;
+
+        System.out.println(++I);
+
+        bodyConainer.forEach(Body::clearForce);
+
         /*if (bodyConainer.size() == 2) {
 
         } else {
@@ -124,24 +133,24 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
             for(int j = i+1; j<bodyConainer.size(); j++) {
                 body1 = bodyConainer.get(i);
                 body2 = bodyConainer.get(j);
-                Vector3D vForce = Physics.calculateGravity(body1, body2);
-                bodyConainer.setForce(
-                        bodyConainer.getForce(i)
-                                .add(vForce)
-                                .scale(body1.getMass().pow(-1)), i);
-                body1.setVelocity(body1.getVelocity().add(bodyConainer.getForce(i).scale(simSpeed)));
-                body1.setPosition(body1.getPosition().add(body1.getVelocity().scale(simSpeed)));
+                vForce = Physics.calculateGravity(body1, body2);
+                body1.setForce(
+                        body1.getForce().add(vForce));
 
-                bodyConainer.setForce(
-                        bodyConainer.getForce(j)
-                                .add(vForce)
-                                .scale(body2.getMass().pow(-1)), j);
-                body2.setVelocity(body2.getVelocity().add(bodyConainer.getForce(j).scale(simSpeed)));
-                body2.setPosition(body2.getPosition().add(body2.getVelocity().scale(simSpeed)));
+                body2.setForce(
+                        body2.getForce().add(vForce.scale(new BigDecimal(-1))));
             }
         }
 
+        bodyConainer.forEach(body -> {
+            body.setVelocity(body.getVelocity().add(
+                    body.getForce()
+                        .scale(divideRound(1, body.getMass()))
+                        .scale(simSpeed)));
+            body.setPosition(body.getPosition().add(body.getVelocity().scale(simSpeed)));
 
-
+            System.out.println(body.getForce());
+            System.out.println(body.getVelocity());
+        });
     }
 }

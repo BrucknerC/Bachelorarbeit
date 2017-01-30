@@ -1,7 +1,5 @@
 package gravitysandbox.physics;
 
-import gravitysandbox.util.Vector3D;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -9,7 +7,6 @@ import java.util.Iterator;
 public class BodyConainer implements Iterable<Body> {
 
     private ArrayList<Body> bodies;
-    private ArrayList<Vector3D> forceList;
 
     private static BodyConainer instance = new BodyConainer();
 
@@ -19,7 +16,6 @@ public class BodyConainer implements Iterable<Body> {
 
     private BodyConainer() {
         bodies = new ArrayList<>();
-        forceList = new ArrayList<>();
     }
 
     @Override
@@ -29,7 +25,6 @@ public class BodyConainer implements Iterable<Body> {
 
     public void add(Body body, int index) {
         bodies.add(index, body);
-        forceList.add(index, new Vector3D());
     }
 
     public int size() {
@@ -40,10 +35,4 @@ public class BodyConainer implements Iterable<Body> {
         return bodies.get(index);
     }
 
-    public Vector3D getForce(int index) {
-        return forceList.get(index);
-    }
-    public void setForce(Vector3D vector, int index) {
-        forceList.set(index, vector);
-    }
 }

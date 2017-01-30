@@ -3,8 +3,8 @@ package gravitysandbox.physics;
 import gravitysandbox.util.Vector3D;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
+
+import static org.nevec.rjm.BigDecimalMath.*;
 
 /**
  * Contains constants and functions for calculating physical formulas.
@@ -21,7 +21,7 @@ public class Physics {
      * The representation of the universal gravitational constant (6.67408 * 10^-11) as {@link BigDecimal}.
      * Source for value: http://physics.nist.gov/cgi-bin/cuu/Value?bg (accessed 2016-01-11)
      */
-    public static final BigDecimal G = new BigDecimal(new BigInteger("667408"), 16);
+    public static final BigDecimal G = new BigDecimal("6.67408E-11");
 
     public static final BigDecimal AU = new BigDecimal(149_597_870_700L);
 
@@ -36,16 +36,17 @@ public class Physics {
      * @return The gravitational force represented as a {@link Vector3D}.
      */
     public static Vector3D calculateGravity(Body body1, Body body2) {
-        Vector3D distance = body2.getPosition();
-        distance.subtract(body1.getPosition());
-        distance.unify();
-        distance.scale(
-                G.multiply(body1.getMass())
-                        .multiply(body2.getMass())
-                        .divide(
-                                distance.length().pow(2),
-                                RoundingMode.HALF_UP)
+        Vector3D distance = body2.getPosition().subtract(body1.getPosition());
+        distance = distance.unify();
+        return distance.scale(
+                multiplyRound(G,
+                        divideRound(
+                                multiplyRound(
+                                        body1.getMass(),
+                                        body2.getMass()),
+                                powRound(distance.length(), 2)
+                        )
+                )
         );
-        return distance;
     }
 }

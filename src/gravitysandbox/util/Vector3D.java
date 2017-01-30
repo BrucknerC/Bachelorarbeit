@@ -2,9 +2,11 @@ package gravitysandbox.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
+
+import static org.nevec.rjm.BigDecimalMath.*;
 
 // TODO: Documentation
+
 /**
  * A three dimensional vector using {@link BigDecimal} for arbitrary precision values with support for the most common vector operations.
  *
@@ -56,9 +58,20 @@ public class Vector3D {
      * @return The cross product vector.
      */
     public Vector3D vectorProduct(Vector3D vector) {
-        return new Vector3D(getY().multiply(vector.getZ()).subtract(getZ().multiply(vector.getY())),
-                getZ().multiply(vector.getX()).subtract(getX().multiply(vector.getZ())),
-                getX().multiply(vector.getY()).subtract(getY().multiply(vector.getX())));
+        return new Vector3D(
+                subtractRound(
+                        multiplyRound(y, vector.getZ()),
+                        multiplyRound(z, vector.getY())
+                ),
+                subtractRound(
+                        multiplyRound(z, vector.getX()),
+                        multiplyRound(x, vector.getZ())
+                ),
+                subtractRound(
+                        multiplyRound(x, vector.getY()),
+                        multiplyRound(y, vector.getX())
+                )
+        );
     }
 
     /**
@@ -67,9 +80,10 @@ public class Vector3D {
      * @param vector The vector to be added.
      */
     public Vector3D add(Vector3D vector) {
-        return new Vector3D(getX().add(vector.getX()),
-        getY().add(vector.getY()),
-        getZ().add(vector.getZ()));
+        return new Vector3D(
+                addRound(x, vector.getX()),
+                addRound(y, vector.getY()),
+                addRound(z, vector.getZ()));
     }
 
     /**
@@ -78,9 +92,11 @@ public class Vector3D {
      * @param vector The vector to be subtracted.
      */
     public Vector3D subtract(Vector3D vector) {
-        return new Vector3D(getX().subtract(vector.getX()),
-        getY().subtract(vector.getY()),
-        getZ().subtract(vector.getZ()));
+        return new Vector3D(
+                subtractRound(x, vector.getX()),
+                subtractRound(y, vector.getX()),
+                subtractRound(z, vector.getX())
+        );
     }
 
     /**
@@ -90,9 +106,14 @@ public class Vector3D {
      * @return The value of the scalar product.
      */
     public BigDecimal scalarProduct(Vector3D vector) {
-        return getX().multiply(vector.getX())
-                .add(getY().multiply(vector.getY()))
-                .add(getZ().multiply(vector.getZ()));
+        return addRound(
+                multiplyRound(x, vector.getX()),
+                addRound(
+                        multiplyRound(y, vector.getY()),
+                        multiplyRound(z, vector.getZ())
+                )
+        );
+
     }
 
     /**
@@ -101,10 +122,14 @@ public class Vector3D {
      * @return The length of the vector.
      */
     public BigDecimal length() {
-        return sqrt(new BigDecimal(BigInteger.ZERO)
-                .add(x.pow(2))
-                .add(y.pow(2))
-                .add(z.pow(2))
+        return sqrt(
+                addRound(
+                        powRound(x, 2),
+                        addRound(
+                                powRound(y, 2),
+                                powRound(z, 2)
+                        )
+                )
         );
     }
 
@@ -113,9 +138,11 @@ public class Vector3D {
      */
     public Vector3D unify() {
         BigDecimal length = length();
-        return new Vector3D(getX().divide(length, RoundingMode.HALF_UP),
-                getY().divide(length, RoundingMode.HALF_UP),
-                getZ().divide(length, RoundingMode.HALF_UP));
+        return new Vector3D(
+                divideRound(x, length),
+                divideRound(y, length),
+                divideRound(z, length)
+        );
     }
 
     /**
@@ -124,7 +151,11 @@ public class Vector3D {
      * @param scalar The scalar used for scaling.
      */
     public Vector3D scale(BigDecimal scalar) {
-        return new Vector3D(getX().multiply(scalar), getY().multiply(scalar), getZ().multiply(scalar));
+        return new Vector3D(
+                multiplyRound(x, scalar),
+                multiplyRound(y, scalar),
+                multiplyRound(z, scalar)
+        );
     }
 
     /**
@@ -181,27 +212,8 @@ public class Vector3D {
         return z;
     }
 
-    /**
-     * Calculate the square root of the given {@link BigDecimal}.
-     * <p>
-     * It uses the babylonian method (https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Babylonian_method) for calculating the square root.
-     * Source: http://stackoverflow.com/a/19743026 (accessed 2016-01-11)
-     *
-     * @param A The {@link BigDecimal} of which the square root will be calculated.
-     * @return The square root of A.
-     * @author barwnikk
-     */
-    private BigDecimal sqrt(BigDecimal A) {
-        BigDecimal x0 = new BigDecimal("0");
-        BigDecimal x1 = new BigDecimal(Math.sqrt(A.doubleValue()));
-        BigDecimal TWO = new BigDecimal(2);
-        while (!x0.equals(x1)) {
-            x0 = x1;
-            x1 = A.divide(x0, RoundingMode.HALF_UP);
-            x1 = x1.add(x0);
-            x1 = x1.divide(TWO, RoundingMode.HALF_UP);
-        }
-        return x1;
+    @Override
+    public String toString() {
+        return this.x + ", " + this.y + ", " + this.z;
     }
-
 }

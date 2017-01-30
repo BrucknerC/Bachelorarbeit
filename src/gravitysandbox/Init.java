@@ -5,6 +5,7 @@ import gravitysandbox.physics.Body;
 import gravitysandbox.physics.BodyConainer;
 import gravitysandbox.physics.Physics;
 import gravitysandbox.util.Vector3D;
+import org.nevec.rjm.BigDecimalMath;
 
 import javax.swing.*;
 import java.math.BigDecimal;
@@ -30,11 +31,9 @@ public class Init {
 
         // Sonne in der Mitte
         bodyConainer.add(new Body("Sonne",
-                new Vector3D(new BigDecimal(0), new BigDecimal(0), new BigDecimal(0)),
-                new Vector3D(new BigDecimal(0), new BigDecimal(0), new BigDecimal(0)),
+                new Vector3D(),
+                new Vector3D(),
                 new BigDecimal("1.9884E30")), bodyConainer.size());
-
-        System.out.println(Physics.G);
 
         new MainFrame();
     }
