@@ -29,7 +29,7 @@
 # IntelliJ
 /out/
 
-/libs/
+/libs/*
 !/libs/BigDecimalMath.jar
 
 # mpeltonen/sbt-idea plugin
