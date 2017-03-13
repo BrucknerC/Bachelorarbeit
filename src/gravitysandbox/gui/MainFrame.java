@@ -44,6 +44,8 @@ public class MainFrame extends JFrame {
         });
         setVisible(true);
 
+        btnSimulatePressed();
+
         gravityCanvas.requestFocus();
 
     }

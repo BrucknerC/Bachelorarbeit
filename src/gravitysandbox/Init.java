@@ -5,7 +5,6 @@ import gravitysandbox.physics.Body;
 import gravitysandbox.physics.BodyConainer;
 import gravitysandbox.physics.Physics;
 import gravitysandbox.util.Vector3D;
-import org.nevec.rjm.BigDecimalMath;
 
 import javax.swing.*;
 import java.math.BigDecimal;
