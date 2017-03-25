@@ -51,7 +51,7 @@ public class Body {
     public Body(String name, Vector3D position, Vector3D velocity, BigDecimal mass) {
         previousLocations = new ArrayList<>();
         setName(name);
-        setPosition(position);
+        this.position=position;
         setVelocity(velocity);
         setMass(mass);
     }

@@ -9,10 +9,11 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import gravitysandbox.physics.Body;
 import gravitysandbox.physics.BodyConainer;
 import gravitysandbox.physics.Physics;
+import gravitysandbox.util.Vector3D;
 
 import java.math.BigDecimal;
 
-import static java.math.RoundingMode.HALF_EVEN;
+import static java.math.RoundingMode.HALF_UP;
 
 public class GravityCanvas extends GLCanvas implements GLEventListener {
 
@@ -45,15 +46,15 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
         for (Body body : bodyConainer) {
             gl.glPushMatrix();
 
-            gl.glTranslated(body.getPosition().getX().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_EVEN).doubleValue(),
-                    body.getPosition().getY().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_EVEN).doubleValue(),
-                    body.getPosition().getZ().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_EVEN).doubleValue());
+            gl.glTranslated(body.getPosition().getX().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_UP).doubleValue(),
+                    body.getPosition().getY().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_UP).doubleValue(),
+                    body.getPosition().getZ().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_UP).doubleValue());
 
 
-            System.out.println(body.getName());
-            System.out.println(body.getPosition().getX().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_EVEN) + ", " +
-                    body.getPosition().getY().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_EVEN) + ", " +
-                    body.getPosition().getZ().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_EVEN));
+            /*System.out.println(body.getName());
+            System.out.println(body.getPosition().getX().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_UP) + ", " +
+                    body.getPosition().getY().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_UP) + ", " +
+                    body.getPosition().getZ().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_UP));
             //System.out.println(body.getPosition().scale(BigDecimal.ONE.divide(Physics.AU, body.getPosition().getX().scale(), HALF_UP)));
             /*System.out.println(body.getMass().movePointRight(body.getMass().scale()-5).doubleValue());
             */
@@ -61,17 +62,17 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
             glut.glutSolidSphere(Math.log10(body.getMass().doubleValue()) * zoomLevel, 50, 50);
 
             gl.glPopMatrix();
-            /*
+
             gl.glBegin(GL2.GL_LINE_STRIP);
             if (body.getPreviousLocations().size()>2) {
                 for (Vector3D point : body.getPreviousLocations()) {
-                    gl.glVertex3d(point.getX().divide(Physics.AU, point.getX().scale() - Physics.AU.scale(), HALF_EVEN).doubleValue(),
-                            point.getY().divide(Physics.AU, point.getY().scale() - Physics.AU.scale(), HALF_EVEN).doubleValue(),
-                            point.getZ().divide(Physics.AU, point.getZ().scale() - Physics.AU.scale(), HALF_EVEN).doubleValue());
+                    gl.glVertex3d(point.getX().divide(Physics.AU, point.getX().scale() - Physics.AU.scale(), HALF_UP).doubleValue(),
+                            point.getY().divide(Physics.AU, point.getX().scale() - Physics.AU.scale(), HALF_UP).doubleValue(),
+                            point.getZ().divide(Physics.AU, point.getX().scale() - Physics.AU.scale(), HALF_UP).doubleValue());
                 }
             }
             gl.glEnd();
-            */
+
         }
 
         if (getAnimator().isStarted())

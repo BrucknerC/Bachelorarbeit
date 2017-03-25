@@ -3,7 +3,7 @@ package gravitysandbox.util;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import static java.math.RoundingMode.HALF_EVEN;
+import static java.math.RoundingMode.HALF_UP;
 
 // TODO: Documentation
 
@@ -61,13 +61,13 @@ public class Vector3D {
         return new Vector3D(
                 y.multiply(vector.getZ()).subtract(
                         z.multiply(vector.getY())
-                ).setScale(z.scale()>vector.getY().scale()?vector.getY().scale():z.scale(), HALF_EVEN),
+                ).setScale(z.scale() > vector.getY().scale() ? vector.getY().scale() : z.scale(), HALF_UP),
                 z.multiply(vector.getX()).subtract(
                         x.multiply(vector.getZ())
-                ).setScale(x.scale()>vector.getZ().scale()?vector.getZ().scale():x.scale(), HALF_EVEN),
+                ).setScale(x.scale() > vector.getZ().scale() ? vector.getZ().scale() : x.scale(), HALF_UP),
                 x.multiply(vector.getY()).subtract(
                         y.multiply(vector.getX())
-                ).setScale(y.scale()>vector.getX().scale()?vector.getX().scale():y.scale(), HALF_EVEN)
+                ).setScale(y.scale() > vector.getX().scale() ? vector.getX().scale() : y.scale(), HALF_UP)
         );
     }
 
@@ -91,8 +91,8 @@ public class Vector3D {
     public Vector3D subtract(Vector3D vector) {
         return new Vector3D(
                 x.subtract(vector.getX()),
-                y.subtract(vector.getX()),
-                z.subtract(vector.getX())
+                y.subtract(vector.getY()),
+                z.subtract(vector.getZ())
         );
     }
 
@@ -128,9 +128,9 @@ public class Vector3D {
     public Vector3D unify() {
         BigDecimal length = length();
         return new Vector3D(
-                x.divide(length, x.scale()-length.scale(), HALF_EVEN),
-                y.divide(length, x.scale()-length.scale(), HALF_EVEN),
-                z.divide(length, x.scale()-length.scale(), HALF_EVEN)
+                x.divide(length, x.scale() - length.scale(), HALF_UP),
+                y.divide(length, y.scale() - length.scale(), HALF_UP),
+                z.divide(length, z.scale() - length.scale(), HALF_UP)
         );
     }
 
@@ -141,9 +141,9 @@ public class Vector3D {
      */
     public Vector3D scale(BigDecimal scalar) {
         return new Vector3D(
-                x.multiply(scalar).setScale(x.scale()>scalar.scale()?scalar.scale():x.scale(), HALF_EVEN),
-                y.multiply(scalar).setScale(y.scale()>scalar.scale()?scalar.scale():y.scale(), HALF_EVEN),
-                z.multiply(scalar).setScale(z.scale()>scalar.scale()?scalar.scale():z.scale(), HALF_EVEN)
+                x.multiply(scalar).setScale(scalar.scale(), HALF_UP),
+                y.multiply(scalar).setScale(scalar.scale(), HALF_UP),
+                z.multiply(scalar).setScale(scalar.scale(), HALF_UP)
         );
     }
 
@@ -206,6 +206,12 @@ public class Vector3D {
                 y.stripTrailingZeros(),
                 z.stripTrailingZeros()
         );
+    }
+
+    public int getBDScale() {
+        int minScale = x.scale() <y.scale() ? x.scale() : y.scale();
+        minScale = z.scale() < minScale ? z.scale() : minScale;
+        return minScale;
     }
 
     @Override

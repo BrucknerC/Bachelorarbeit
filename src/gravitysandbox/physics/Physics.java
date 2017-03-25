@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
 
+import static java.math.RoundingMode.HALF_UP;
+
 //TODO:Documentation
 
 /**
@@ -64,61 +66,45 @@ public class Physics {
         gravAcceleration = gravAcceleration.scale(BigDecimal.ZERO);
 
         BigDecimal tmp, cubedDistance;
-        int tmpScales[] = new int[12];
         Vector3D tmpLoc, tmpVel, tmpAccel;
         Vector3D rk1, rk2, rk3, rk4;
 
         for (Body externalBody : BodyConainer.getInstance()) {
             if (!body.equals(externalBody)) {
-                cubedDistance = (externalBody.getPosition().subtract(body.getPosition()).length()).pow(3);
+                cubedDistance = ((externalBody.getPosition().subtract(body.getPosition())).length()).pow(3);
                 tmp = G.multiply(externalBody.getMass());
-                tmp = tmp.divide(cubedDistance, cubedDistance.scale() - tmp.scale(), RoundingMode.HALF_EVEN);
+                tmp = tmp.divide(cubedDistance, cubedDistance.scale() - tmp.scale(), HALF_UP);
 
-                rk1 = externalBody.getPosition().subtract(body.getPosition()).scale(tmp);
-                tmpScales[0] = rk1.getX().scale();
-                tmpScales[1] = rk1.getY().scale();
-                tmpScales[2] = rk1.getZ().scale();
+                rk1 = (externalBody.getPosition().subtract(body.getPosition())).scale(tmp);
 
-                tmpVel = partialCalculationStep(body.getVelocity(), rk1, BD_0_5);
+                tmpVel = partialCalculationStep(body.getVelocity(), rk1, simSpeed.multiply(BD_0_5));
                 tmpLoc = partialCalculationStep(body.getPosition(), tmpVel, simSpeed.multiply(BD_0_5));
-                rk2 = externalBody.getPosition().subtract(tmpLoc).scale(tmp);
-                tmpScales[3] = rk2.getX().scale();
-                tmpScales[4] = rk2.getY().scale();
-                tmpScales[5] = rk2.getZ().scale();
+                rk2 = (externalBody.getPosition().subtract(tmpLoc)).scale(tmp);
 
-                tmpVel = partialCalculationStep(body.getVelocity(), rk2, BD_0_5);
+                tmpVel = partialCalculationStep(body.getVelocity(), rk2, simSpeed.multiply(BD_0_5));
                 tmpLoc = partialCalculationStep(body.getPosition(), tmpVel, simSpeed.multiply(BD_0_5));
-                rk3 = externalBody.getPosition().subtract(tmpLoc).scale(tmp);
-                tmpScales[6] = rk3.getX().scale();
-                tmpScales[7] = rk3.getY().scale();
-                tmpScales[8] = rk3.getZ().scale();
+                rk3 = (externalBody.getPosition().subtract(tmpLoc)).scale(tmp);
 
-                tmpVel = partialCalculationStep(body.getVelocity(), rk3, BigDecimal.ONE);
+                tmpVel = partialCalculationStep(body.getVelocity(), rk3, simSpeed);
                 tmpLoc = partialCalculationStep(body.getPosition(), tmpVel, simSpeed);
-                rk4 = externalBody.getPosition().subtract(tmpLoc).scale(tmp);
-                tmpScales[9] = rk4.getX().scale();
-                tmpScales[10] = rk4.getY().scale();
-                tmpScales[11] = rk4.getZ().scale();
+                rk4 = (externalBody.getPosition().subtract(tmpLoc)).scale(tmp);
 
                 tmpAccel = rk1
-                        .add(rk2.scale(BD_2))
-                        .add(rk3.scale(BD_2))
+                        .add(rk2.scale(BD_2.setScale(rk2.getBDScale(), HALF_UP)))
+                        .add(rk3.scale(BD_2.setScale(rk3.getBDScale(), HALF_UP)))
                         .add(rk4);
 
-                Arrays.sort(tmpScales);
 
-                tmpAccel = tmpAccel.scale(BigDecimal.ONE.divide(BD_6, tmpScales[tmpScales.length - 1], RoundingMode.HALF_EVEN)).stripTrailingZeros();
+                tmpAccel = tmpAccel.scale(BigDecimal.ONE.divide(BD_6, tmpAccel.getBDScale(), HALF_UP)).stripTrailingZeros();
                 gravAcceleration = gravAcceleration.add(tmpAccel);
             }
         }
+
         return gravAcceleration;
     }
 
-    private static Vector3D partialCalculationStep(Vector3D point1, Vector3D point2, BigDecimal timeStep) {
-        return new Vector3D(point1.getX().add(point2.getX().multiply(timeStep)),
-                point1.getY().add(point2.getZ().multiply(timeStep)),
-                point1.getZ().add(point2.getZ().multiply(timeStep))
-        );
+    private static Vector3D partialCalculationStep(Vector3D vector1, Vector3D vector2, BigDecimal timeStep) {
+        return vector1.add(vector2.scale(timeStep));
     }
 
 }
