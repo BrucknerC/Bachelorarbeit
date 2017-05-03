@@ -209,9 +209,7 @@ public class Vector3D {
     }
 
     public int getBDScale() {
-        int minScale = x.scale() <y.scale() ? x.scale() : y.scale();
-        minScale = z.scale() < minScale ? z.scale() : minScale;
-        return minScale;
+        return BigDecimalMath.minScale(x, y, z);
     }
 
     @Override

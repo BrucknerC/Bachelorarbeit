@@ -80,4 +80,37 @@ public class BigDecimalMath {
         }
         return x1;
     }
+
+    public static int maxScale(BigDecimal... elems) {
+        int tmpmax = elems[0].scale();
+        for (int i = 1; i < elems.length; i++) {
+            tmpmax = elems[i].scale() > tmpmax ? elems[i].scale() : tmpmax;
+        }
+        return tmpmax;
+    }
+
+    public static BigDecimal max(BigDecimal... elems) {
+        BigDecimal tmpmax = elems[0];
+        for (int i = 1; i < elems.length; i++) {
+            tmpmax = elems[i].compareTo(tmpmax) > 0 ? elems[i] : tmpmax;
+        }
+        return tmpmax;
+    }
+
+    public static int minScale(BigDecimal... elems) {
+        int tmpmin = elems[0].scale();
+        for (int i = 1; i < elems.length; i++) {
+            tmpmin = elems[i].scale() < tmpmin ? elems[i].scale() : tmpmin;
+        }
+        return tmpmin;
+    }
+
+    public static BigDecimal min(BigDecimal... elems) {
+        BigDecimal tmpmax = elems[0];
+        for (int i = 1; i < elems.length; i++) {
+            tmpmax = elems[i].compareTo(tmpmax) < 0 ? elems[i] : tmpmax;
+        }
+        return tmpmax;
+    }
+
 }

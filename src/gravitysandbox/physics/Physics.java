@@ -45,11 +45,6 @@ public class Physics {
      */
     public static final BigDecimal pc = new BigDecimal("3.08567758149137E16");
 
-    private static Vector3D gravAcceleration = new Vector3D();
-    private static final BigDecimal BD_0_5 = new BigDecimal("0.5");
-    private static final BigDecimal BD_2 = new BigDecimal(2);
-    private static final BigDecimal BD_6 = new BigDecimal(6);
-
     /**
      * Calculates the gravitational acceleration for one Body.
      * <p>
@@ -58,53 +53,18 @@ public class Physics {
      * <p>
      * The acceleration is calculated with a fourth order Runge-Kutta method to improve the accuracy.
      *
-     * @param body     The body for which the acceleration is calculated.
-     * @param simSpeed The speed of the simulation.
+     * @param body1     The body for which the acceleration is calculated.
+     * @param body2 The speed of the simulation.
      * @return The gravitational acceleration represented as a {@link Vector3D}.
      */
-    public static Vector3D calculateGravitationalAcceleration(Body body, BigDecimal simSpeed) {
-        gravAcceleration = gravAcceleration.scale(BigDecimal.ZERO);
+    public static Vector3D calculateGravitationalAcceleration(Body body1, Body body2) {
 
         BigDecimal tmp, cubedDistance;
-        Vector3D tmpLoc, tmpVel, tmpAccel;
-        Vector3D rk1, rk2, rk3, rk4;
-
-        for (Body externalBody : BodyConainer.getInstance()) {
-            if (!body.equals(externalBody)) {
-                cubedDistance = ((externalBody.getPosition().subtract(body.getPosition())).length()).pow(3);
-                tmp = G.multiply(externalBody.getMass());
-                tmp = tmp.divide(cubedDistance, cubedDistance.scale() - tmp.scale(), HALF_UP);
-
-                rk1 = (externalBody.getPosition().subtract(body.getPosition())).scale(tmp);
-
-                tmpVel = partialCalculationStep(body.getVelocity(), rk1, simSpeed.multiply(BD_0_5));
-                tmpLoc = partialCalculationStep(body.getPosition(), tmpVel, simSpeed.multiply(BD_0_5));
-                rk2 = (externalBody.getPosition().subtract(tmpLoc)).scale(tmp);
-
-                tmpVel = partialCalculationStep(body.getVelocity(), rk2, simSpeed.multiply(BD_0_5));
-                tmpLoc = partialCalculationStep(body.getPosition(), tmpVel, simSpeed.multiply(BD_0_5));
-                rk3 = (externalBody.getPosition().subtract(tmpLoc)).scale(tmp);
-
-                tmpVel = partialCalculationStep(body.getVelocity(), rk3, simSpeed);
-                tmpLoc = partialCalculationStep(body.getPosition(), tmpVel, simSpeed);
-                rk4 = (externalBody.getPosition().subtract(tmpLoc)).scale(tmp);
-
-                tmpAccel = rk1
-                        .add(rk2.scale(BD_2.setScale(rk2.getBDScale(), HALF_UP)))
-                        .add(rk3.scale(BD_2.setScale(rk3.getBDScale(), HALF_UP)))
-                        .add(rk4);
+        cubedDistance = ((body2.getPosition().subtract(body1.getPosition())).length()).pow(3);
+        tmp = G.multiply(body1.getMass()).multiply(body2.getMass());
+        tmp = tmp.divide(cubedDistance, cubedDistance.scale() - tmp.scale(), HALF_UP);
+        return(body2.getPosition().subtract(body1.getPosition())).scale(tmp);
 
 
-                tmpAccel = tmpAccel.scale(BigDecimal.ONE.divide(BD_6, tmpAccel.getBDScale(), HALF_UP)).stripTrailingZeros();
-                gravAcceleration = gravAcceleration.add(tmpAccel);
-            }
-        }
-
-        return gravAcceleration;
     }
-
-    private static Vector3D partialCalculationStep(Vector3D vector1, Vector3D vector2, BigDecimal timeStep) {
-        return vector1.add(vector2.scale(timeStep));
-    }
-
 }

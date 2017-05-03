@@ -26,7 +26,7 @@ public class Init {
         bodyConainer.add(new Body("Erde",
                 new Vector3D(Physics.AU.multiply(new BigDecimal(0.983)), new BigDecimal(0), new BigDecimal(0)),
                 new Vector3D(new BigDecimal(0), new BigDecimal(30.3E3), new BigDecimal(0)),
-                new BigDecimal("5.972E24")), bodyConainer.size());
+                new BigDecimal("5.972E25")), bodyConainer.size());
 
         // Sonne in der Mitte
         bodyConainer.add(new Body("Sonne",

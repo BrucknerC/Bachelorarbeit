@@ -9,6 +9,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import gravitysandbox.physics.Body;
 import gravitysandbox.physics.BodyConainer;
 import gravitysandbox.physics.Physics;
+import gravitysandbox.util.BigDecimalMath;
 import gravitysandbox.util.Vector3D;
 
 import java.math.BigDecimal;
@@ -20,7 +21,7 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
     private GL2 gl;
     private GLU glu;
     private GLUT glut;
-    private BodyConainer bodyConainer;
+    private BodyConainer bodyContainer;
     private BigDecimal simSpeed;
     private double zoomLevel;
 
@@ -37,27 +38,34 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
         //Modellmatrix initialisieren
         gl.glLoadIdentity();
         //Kamera positionieren
-        glu.gluLookAt(0, 0, 10, 0, 0, 0, 0, 1, 0);
+        glu.gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
 
         gl.glClearColor(0, 0, 0, 1);
 
         gl.glColor3f(1, 1, 1);
 
-        for (Body body : bodyConainer) {
+        int tmpScale;
+
+        for (Body body : bodyContainer) {
             gl.glPushMatrix();
 
-            gl.glTranslated(body.getPosition().getX().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_UP).doubleValue(),
-                    body.getPosition().getY().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_UP).doubleValue(),
-                    body.getPosition().getZ().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_UP).doubleValue());
+            tmpScale = BigDecimalMath.maxScale(body.getPosition().getX(), body.getPosition().getY(), body.getPosition().getZ());
+
+            gl.glTranslated(
+                    body.getPosition().getX().divide(Physics.AU, tmpScale - Physics.AU.scale(), HALF_UP).doubleValue(),
+                    body.getPosition().getY().divide(Physics.AU, tmpScale - Physics.AU.scale(), HALF_UP).doubleValue(),
+                    body.getPosition().getZ().divide(Physics.AU, tmpScale - Physics.AU.scale(), HALF_UP).doubleValue()
+            );
 
 
             /*System.out.println(body.getName());
             System.out.println(body.getPosition().getX().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_UP) + ", " +
                     body.getPosition().getY().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_UP) + ", " +
                     body.getPosition().getZ().divide(Physics.AU, body.getPosition().getX().scale() - Physics.AU.scale(), HALF_UP));
+                    */
             //System.out.println(body.getPosition().scale(BigDecimal.ONE.divide(Physics.AU, body.getPosition().getX().scale(), HALF_UP)));
-            /*System.out.println(body.getMass().movePointRight(body.getMass().scale()-5).doubleValue());
-            */
+            //System.out.println(body.getMass().movePointRight(body.getMass().scale()-5).doubleValue());
+
 
             glut.glutSolidSphere(Math.log10(body.getMass().doubleValue()) * zoomLevel, 50, 50);
 
@@ -66,9 +74,12 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
             gl.glBegin(GL2.GL_LINE_STRIP);
             if (body.getPreviousLocations().size()>2) {
                 for (Vector3D point : body.getPreviousLocations()) {
-                    gl.glVertex3d(point.getX().divide(Physics.AU, point.getX().scale() - Physics.AU.scale(), HALF_UP).doubleValue(),
-                            point.getY().divide(Physics.AU, point.getX().scale() - Physics.AU.scale(), HALF_UP).doubleValue(),
-                            point.getZ().divide(Physics.AU, point.getX().scale() - Physics.AU.scale(), HALF_UP).doubleValue());
+                    tmpScale = BigDecimalMath.maxScale(point.getX(), point.getY(), point.getZ());
+                    gl.glVertex3d(
+                            point.getX().divide(Physics.AU, tmpScale - Physics.AU.scale(), HALF_UP).doubleValue(),
+                            point.getY().divide(Physics.AU, tmpScale - Physics.AU.scale(), HALF_UP).doubleValue(),
+                            point.getZ().divide(Physics.AU, tmpScale - Physics.AU.scale(), HALF_UP).doubleValue()
+                    );
                 }
             }
             gl.glEnd();
@@ -86,7 +97,7 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
     public void init(GLAutoDrawable gLDrawable) {
         glu = new GLU();
         glut = new GLUT();
-        bodyConainer = BodyConainer.getInstance();
+        bodyContainer = BodyConainer.getInstance();
         simSpeed = new BigDecimal("86400");
         zoomLevel = 0.00125;
     }
@@ -117,22 +128,36 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
     }
 
     private void animate() {
-        /*if (bodyConainer.size() == 2) {
+        /*if (bodyContainer.size() == 2) {
 
         } else {
 
         }*/
 
-        for (Body body : bodyConainer) {
-            body.setVelocity(
-                    body.getVelocity().add(
-                            Physics.calculateGravitationalAcceleration(body, simSpeed)
-                                    .scale(simSpeed)
-                    )
-            );
+        Vector3D gravForce;
+        Body body1, body2;
+
+        for (int i = 0; i < bodyContainer.size(); i++) {
+            body1 = bodyContainer.get(i);
+            for (int j = i+1; j < bodyContainer.size(); j++) {
+                body2 = bodyContainer.get(j);
+                gravForce = Physics.calculateGravitationalAcceleration(bodyContainer.get(i), bodyContainer.get(j));
+                body1.setVelocity(
+                        body1.getVelocity().add(
+                                gravForce.scale(BigDecimal.ONE.divide(body1.getMass(), -gravForce.getBDScale()*body1.getMass().scale(), HALF_UP))
+                                        .scale(simSpeed)
+                        )
+                );
+                body2.setVelocity(
+                        body2.getVelocity().add(
+                                gravForce.scale(BigDecimal.ONE.negate().divide(body2.getMass(), -gravForce.getBDScale()*body2.getMass().scale(), HALF_UP))
+                                        .scale(simSpeed)
+                        )
+                );
+            }
         }
 
-        for (Body body : bodyConainer) {
+        for (Body body : bodyContainer) {
             body.setPosition(
                     body.getPosition().add(
                             body.getVelocity()
