@@ -38,23 +38,19 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
         //Modellmatrix initialisieren
         gl.glLoadIdentity();
         //Kamera positionieren
-        glu.gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+        glu.gluLookAt(0, 0, 10, 0, 0, 0, 0, 1, 0);
 
         gl.glClearColor(0, 0, 0, 1);
 
         gl.glColor3f(1, 1, 1);
 
-        int tmpScale;
-
         for (Body body : bodyContainer) {
             gl.glPushMatrix();
 
-            tmpScale = BigDecimalMath.maxScale(body.getPosition().getX(), body.getPosition().getY(), body.getPosition().getZ());
-
             gl.glTranslated(
-                    body.getPosition().getX().divide(Physics.AU, tmpScale - Physics.AU.scale(), HALF_UP).doubleValue(),
-                    body.getPosition().getY().divide(Physics.AU, tmpScale - Physics.AU.scale(), HALF_UP).doubleValue(),
-                    body.getPosition().getZ().divide(Physics.AU, tmpScale - Physics.AU.scale(), HALF_UP).doubleValue()
+                    body.getPosition().getX().divide(Physics.AU, 50, HALF_UP).doubleValue(),
+                    body.getPosition().getY().divide(Physics.AU, 50, HALF_UP).doubleValue(),
+                    body.getPosition().getZ().divide(Physics.AU, 50, HALF_UP).doubleValue()
             );
 
 
@@ -74,11 +70,10 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
             gl.glBegin(GL2.GL_LINE_STRIP);
             if (body.getPreviousLocations().size()>2) {
                 for (Vector3D point : body.getPreviousLocations()) {
-                    tmpScale = BigDecimalMath.maxScale(point.getX(), point.getY(), point.getZ());
                     gl.glVertex3d(
-                            point.getX().divide(Physics.AU, tmpScale - Physics.AU.scale(), HALF_UP).doubleValue(),
-                            point.getY().divide(Physics.AU, tmpScale - Physics.AU.scale(), HALF_UP).doubleValue(),
-                            point.getZ().divide(Physics.AU, tmpScale - Physics.AU.scale(), HALF_UP).doubleValue()
+                            point.getX().divide(Physics.AU, 50, HALF_UP).doubleValue(),
+                            point.getY().divide(Physics.AU, 50, HALF_UP).doubleValue(),
+                            point.getZ().divide(Physics.AU, 50, HALF_UP).doubleValue()
                     );
                 }
             }
