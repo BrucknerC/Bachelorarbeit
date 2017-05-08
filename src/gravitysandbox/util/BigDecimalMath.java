@@ -65,23 +65,12 @@ public class BigDecimalMath {
     }
 
     /**
-     * Source: http://stackoverflow.com/questions/13649703/square-root-of-bigdecimal-in-java
      *
      * @param A
      * @return
      */
     public static BigDecimal sqrt(BigDecimal A) {
-        BigDecimal x0 = new BigDecimal("0");
-        BigDecimal x1 = new BigDecimal(Math.sqrt(A.doubleValue()));
-        BigDecimal TWO = new BigDecimal(2);
-        while (!x0.equals(x1)) {
-            x0 = x1;
-            x1 = A.divide(x0, A.scale()-x0.scale(), HALF_UP);
-            x1 = x1.add(x0);
-            x1 = x1.divide(TWO, x1.scale()-TWO.scale(), HALF_UP);
-
-        }
-        return x1;
+        return new BigDecimal(Math.sqrt(A.doubleValue()));
     }
 
     public static int maxScale(BigDecimal... elems) {
