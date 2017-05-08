@@ -3,8 +3,6 @@ package gravitysandbox.physics;
 import gravitysandbox.util.Vector3D;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Arrays;
 
 import static java.math.RoundingMode.HALF_UP;
 
@@ -14,7 +12,7 @@ import static java.math.RoundingMode.HALF_UP;
  * Contains constants and functions for calculating physical formulas.
  *
  * @author Christoph Bruckner
- * @version 1.0
+ * @version 1.2
  * @since 0.1
  */
 public class Physics {

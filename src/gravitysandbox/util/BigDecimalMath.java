@@ -4,11 +4,14 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 import static java.math.RoundingMode.HALF_EVEN;
+import static java.math.RoundingMode.HALF_UP;
 
 //TODO: Documentation
 
 /**
  * @author Christoph Bruckner
+ * @version 1.1
+ * @since 0.2
  */
 public class BigDecimalMath {
 
@@ -25,7 +28,7 @@ public class BigDecimalMath {
         //  and then add one again to get the next number
         //  so I can round it correctly.
 
-        MathContext mc = new MathContext(NUM_OF_DIGITS, HALF_EVEN);
+        MathContext mc = new MathContext(NUM_OF_DIGITS, HALF_UP);
 
         //special conditions:
         // log(-x) -> exception
@@ -57,7 +60,7 @@ public class BigDecimalMath {
         BigDecimal ans = new BigDecimal(sb.toString());
 
         //Round the number to the correct number of decimal places.
-        ans = ans.round(new MathContext(ans.precision() - ans.scale() + dp, HALF_EVEN));
+        ans = ans.round(new MathContext(ans.precision() - ans.scale() + dp, HALF_UP));
         return ans;
     }
 
@@ -73,9 +76,9 @@ public class BigDecimalMath {
         BigDecimal TWO = new BigDecimal(2);
         while (!x0.equals(x1)) {
             x0 = x1;
-            x1 = A.divide(x0, HALF_EVEN);
+            x1 = A.divide(x0, A.scale()-x0.scale(), HALF_UP);
             x1 = x1.add(x0);
-            x1 = x1.divide(TWO, HALF_EVEN);
+            x1 = x1.divide(TWO, x1.scale()-TWO.scale(), HALF_UP);
 
         }
         return x1;

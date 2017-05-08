@@ -16,6 +16,10 @@ import java.math.BigDecimal;
 
 import static java.math.RoundingMode.HALF_UP;
 
+/**
+ * @version 0.6
+ * @since 0.1
+ */
 public class GravityCanvas extends GLCanvas implements GLEventListener {
 
     private GL2 gl;

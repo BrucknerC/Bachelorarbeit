@@ -9,6 +9,10 @@ import gravitysandbox.util.Vector3D;
 import javax.swing.*;
 import java.math.BigDecimal;
 
+/**
+ * @version 0.2
+ * @since 0.1
+ */
 public class Init {
 
     public static void main(String[] args) {

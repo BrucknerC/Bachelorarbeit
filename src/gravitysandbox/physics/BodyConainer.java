@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 // TODO: Documentation
+
+/**
+ * @version 1.0
+ * @since 0.1
+ */
 public class BodyConainer implements Iterable<Body> {
 
     private ArrayList<Body> bodies;

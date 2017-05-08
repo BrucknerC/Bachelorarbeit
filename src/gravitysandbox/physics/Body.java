@@ -2,6 +2,7 @@ package gravitysandbox.physics;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Observable;
 
 import gravitysandbox.util.Vector3D;
 
@@ -14,7 +15,7 @@ import gravitysandbox.util.Vector3D;
  * @version 1.0
  * @since 0.1
  */
-public class Body {
+public class Body extends Observable {
 
     /**
      * The name of the body.
@@ -72,6 +73,8 @@ public class Body {
     public void setPosition(Vector3D position) {
         addPreviousLocation(this.position);
         this.position = position;
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -88,6 +91,8 @@ public class Body {
      */
     public void setVelocity(Vector3D velocity) {
         this.velocity = velocity;
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -104,6 +109,8 @@ public class Body {
      */
     public void setMass(BigDecimal mass) {
         this.mass = mass;
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -120,9 +127,11 @@ public class Body {
      */
     public void setName(String name) {
         this.name = name;
+        setChanged();
+        notifyObservers();
     }
 
-    public void addPreviousLocation(Vector3D location) {
+    private void addPreviousLocation(Vector3D location) {
         previousLocations.add(previousLocations.size(), location);
     }
 

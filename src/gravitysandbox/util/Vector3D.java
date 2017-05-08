@@ -216,4 +216,6 @@ public class Vector3D {
     public String toString() {
         return this.x + ", " + this.y + ", " + this.z;
     }
+
+    public String toEngineeringString() {return "(" + this.x.toEngineeringString() + ", " + this.y.toEngineeringString() + ", " + this.z.toEngineeringString() + ")";}
 }
