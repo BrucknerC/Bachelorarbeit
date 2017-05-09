@@ -12,6 +12,9 @@ import gravitysandbox.physics.Physics;
 import gravitysandbox.util.BigDecimalMath;
 import gravitysandbox.util.Vector3D;
 
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
 
 import static java.math.RoundingMode.HALF_UP;
@@ -27,7 +30,12 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
     private GLUT glut;
     private BodyConainer bodyContainer;
     private BigDecimal simSpeed;
-    private double zoomLevel;
+    private double zoomLevel, mouseSpeed;
+    private Point savedMouseLocation;
+    private double cameraPosition[] = {0,0,10};
+    private double lookAtPosition[] = {0,0,0};
+    private double upVector[] = {0,1,0};
+    private int mouseButton;
 
     public GravityCanvas() {
         super();
@@ -42,13 +50,16 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
         //Modellmatrix initialisieren
         gl.glLoadIdentity();
         //Kamera positionieren
-        glu.gluLookAt(0, 0, 10, 0, 0, 0, 0, 1, 0);
+        glu.gluLookAt(cameraPosition[0], cameraPosition[1], cameraPosition[2],
+                lookAtPosition[0], lookAtPosition[1], lookAtPosition[2],
+                upVector[0], upVector[1], upVector[2]);
 
         gl.glClearColor(0, 0, 0, 1);
 
-        gl.glColor3f(1, 1, 1);
-
         for (Body body : bodyContainer) {
+
+            gl.glColor3f(1, 1, 1);
+
             gl.glPushMatrix();
 
             gl.glTranslated(
@@ -73,12 +84,17 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
 
             gl.glBegin(GL2.GL_LINE_STRIP);
             if (body.getPreviousLocations().size()>2) {
+                int i = 0;
+                float iColor;
                 for (Vector3D point : body.getPreviousLocations()) {
+                    iColor = ((float)i/(float)body.getPreviousLocations().size());
+                    gl.glColor3f(iColor, iColor, iColor);
                     gl.glVertex3d(
                             point.getX().divide(Physics.AU, 50, HALF_UP).doubleValue(),
                             point.getY().divide(Physics.AU, 50, HALF_UP).doubleValue(),
                             point.getZ().divide(Physics.AU, 50, HALF_UP).doubleValue()
                     );
+                    i++;
                 }
             }
             gl.glEnd();
@@ -99,7 +115,83 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
         bodyContainer = BodyConainer.getInstance();
         simSpeed = new BigDecimal("86400");
         zoomLevel = 0.00125;
+        savedMouseLocation = new Point();
+        mouseSpeed = 0.02;
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // Transparent 16 x 16 pixel cursor image.
+                BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+                // Create a new blank cursor.
+                Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+                        cursorImg, new Point(0, 0), "blank cursor");
+                // Set the blank cursor to the JFrame.
+                setCursor(blankCursor);
+
+                savedMouseLocation = e.getLocationOnScreen();
+
+                switch (e.getButton()) {
+                    case MouseEvent.BUTTON1:
+                    case MouseEvent.BUTTON3:
+                        mouseButton = e.getButton();
+                        break;
+                    default:
+                        mouseButton = Integer.MIN_VALUE;
+                        break;
+                }
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                try {
+                    // Move the cursor back to the starting location.
+                    Robot robot = new Robot();
+                    robot.mouseMove(savedMouseLocation.x, savedMouseLocation.y);
+                } catch (AWTException ex) {
+                    ex.printStackTrace();
+                }
+                mouseButton = Integer.MIN_VALUE;
+                setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
+
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                Point deltaMouseLocation = new Point(e.getLocationOnScreen().x-savedMouseLocation.x,
+                        e.getLocationOnScreen().y-savedMouseLocation.y);
+                double viewVector[] = {
+                        lookAtPosition[0]-cameraPosition[0],
+                        lookAtPosition[1]-cameraPosition[1],
+                        lookAtPosition[2]-cameraPosition[2]
+                };
+                switch (mouseButton) {
+                    case MouseEvent.BUTTON1:
+                        cameraPosition[0] = cameraPosition[0] - mouseSpeed*deltaMouseLocation.x;
+                        cameraPosition[1] = cameraPosition[1] + mouseSpeed*deltaMouseLocation.y;
+
+                        lookAtPosition[0] = lookAtPosition[0] - mouseSpeed*deltaMouseLocation.x;
+                        lookAtPosition[1] = lookAtPosition[1] + mouseSpeed*deltaMouseLocation.y;
+                        break;
+                    case MouseEvent.BUTTON3:
+
+                        break;
+                }
+
+                try {
+                    // Move the cursor back to the starting location.
+                    Robot robot = new Robot();
+                    robot.mouseMove(savedMouseLocation.x, savedMouseLocation.y);
+                } catch (AWTException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+        });
     }
+
 
     @Override
     public void dispose(GLAutoDrawable glAutoDrawable) {

@@ -41,7 +41,7 @@ public class Init {
         // Jupiter am Aphel
         bodyConainer.add(new Body("Jupiter",
                 new Vector3D(Physics.AU.multiply(new BigDecimal("-5.37")), new BigDecimal(0), new BigDecimal(0)),
-                new Vector3D(new BigDecimal(0), new BigDecimal("-13.07E3"), new BigDecimal(0)),
+                new Vector3D(new BigDecimal("6.07E3"), new BigDecimal("-13.07E3"), new BigDecimal(0)),
                 new BigDecimal("1.899E27")), bodyConainer.size());
 
         new MainFrame();

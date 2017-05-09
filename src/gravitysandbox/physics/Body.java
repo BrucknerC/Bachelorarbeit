@@ -2,6 +2,7 @@ package gravitysandbox.physics;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Observable;
 
 import gravitysandbox.util.Vector3D;
@@ -12,7 +13,7 @@ import gravitysandbox.util.Vector3D;
  * The representation of a physical body with its name, position, velocity and mass.
  *
  * @author Christoph Bruckner
- * @version 1.0
+ * @version 1.1
  * @since 0.1
  */
 public class Body extends Observable {
@@ -35,7 +36,7 @@ public class Body extends Observable {
     /**
      * A list of previous locations.
      */
-    private ArrayList<Vector3D> previousLocations;
+    private LinkedList<Vector3D> previousLocations;
 
     /**
      * The current mass of the body represented as a {@link BigDecimal}.
@@ -50,7 +51,7 @@ public class Body extends Observable {
      * @param mass The starting mass.
      */
     public Body(String name, Vector3D position, Vector3D velocity, BigDecimal mass) {
-        previousLocations = new ArrayList<>();
+        previousLocations = new LinkedList<>();
         setName(name);
         this.position=position;
         setVelocity(velocity);
@@ -132,10 +133,13 @@ public class Body extends Observable {
     }
 
     private void addPreviousLocation(Vector3D location) {
+        if (previousLocations.size()>=250) {
+            previousLocations.removeFirst();
+        }
         previousLocations.add(previousLocations.size(), location);
     }
 
-    public ArrayList<Vector3D> getPreviousLocations() {
+    public LinkedList<Vector3D> getPreviousLocations() {
         return previousLocations;
     }
 
