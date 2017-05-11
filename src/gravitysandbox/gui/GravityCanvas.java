@@ -5,6 +5,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.math.VectorUtil;
 import com.jogamp.opengl.util.gl2.GLUT;
 import gravitysandbox.physics.Body;
 import gravitysandbox.physics.BodyConainer;
@@ -30,11 +31,12 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
     private GLUT glut;
     private BodyConainer bodyContainer;
     private BigDecimal simSpeed;
-    private double zoomLevel, mouseSpeed;
+    private double zoomLevel;
+    private float mouseSpeed;
     private Point savedMouseLocation;
-    private double cameraPosition[] = {0,0,10};
-    private double lookAtPosition[] = {0,0,0};
-    private double upVector[] = {0,1,0};
+    private float cameraPosition[] = {0,0,10};
+    private float lookAtPosition[] = {0,0,0};
+    private float upVector[] = {0,1,0};
     private int mouseButton;
 
     public GravityCanvas() {
@@ -116,7 +118,7 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
         simSpeed = new BigDecimal("86400");
         zoomLevel = 0.00125;
         savedMouseLocation = new Point();
-        mouseSpeed = 0.02;
+        mouseSpeed = 0.02f;
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -162,18 +164,37 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
             public void mouseDragged(MouseEvent e) {
                 Point deltaMouseLocation = new Point(e.getLocationOnScreen().x-savedMouseLocation.x,
                         e.getLocationOnScreen().y-savedMouseLocation.y);
-                double viewVector[] = {
+                float viewVector[] = {
                         lookAtPosition[0]-cameraPosition[0],
                         lookAtPosition[1]-cameraPosition[1],
                         lookAtPosition[2]-cameraPosition[2]
                 };
+                float resultVector1[] = new float[3];
+                float resultVector2[] = new float[3];
                 switch (mouseButton) {
                     case MouseEvent.BUTTON1:
-                        cameraPosition[0] = cameraPosition[0] - mouseSpeed*deltaMouseLocation.x;
-                        cameraPosition[1] = cameraPosition[1] + mouseSpeed*deltaMouseLocation.y;
+                        viewVector = VectorUtil.normalizeVec3(viewVector);
+                        resultVector1 = VectorUtil.crossVec3(resultVector1, viewVector, upVector);
+                        System.out.println(viewVector[0] + ", " + viewVector[1] + ", " + viewVector[2]);
+//                        System.out.println(resultVector1[0] + ", " + resultVector1[1] + ", " + resultVector1[2]);
+                        resultVector1 = VectorUtil.normalizeVec3(
+                                resultVector1,
+                                resultVector1
+                        );
 
-                        lookAtPosition[0] = lookAtPosition[0] - mouseSpeed*deltaMouseLocation.x;
-                        lookAtPosition[1] = lookAtPosition[1] + mouseSpeed*deltaMouseLocation.y;
+                        resultVector2 = VectorUtil.scaleVec3(resultVector2, resultVector1, mouseSpeed*deltaMouseLocation.x);
+                        resultVector1 = VectorUtil.scaleVec3(resultVector1, upVector, mouseSpeed*deltaMouseLocation.y);
+
+//                        System.out.println(resultVector2[0] + ", " + resultVector2[1] + ", " + resultVector2[2]);
+
+                        cameraPosition = VectorUtil.addVec3(cameraPosition,
+                                resultVector2,
+                                resultVector1
+                        );
+                        lookAtPosition = VectorUtil.addVec3(cameraPosition,
+                                resultVector2,
+                                resultVector1
+                        );
                         break;
                     case MouseEvent.BUTTON3:
 
