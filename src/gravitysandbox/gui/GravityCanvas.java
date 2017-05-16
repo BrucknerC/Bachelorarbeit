@@ -19,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
 
 import static java.math.RoundingMode.HALF_UP;
+import static java.lang.Math.pow;
 
 /**
  * @version 0.6
@@ -171,33 +172,45 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
                 };
                 float resultVector1[] = new float[3];
                 float resultVector2[] = new float[3];
+                viewVector = VectorUtil.normalizeVec3(viewVector);
+                upVector = VectorUtil.normalizeVec3(upVector);
+                // Calculate right-vector based on view and up vector
+                resultVector1 = VectorUtil.crossVec3(resultVector1, viewVector, upVector);
+                resultVector1 = VectorUtil.normalizeVec3(resultVector1);
                 switch (mouseButton) {
                     case MouseEvent.BUTTON1:
-                        viewVector = VectorUtil.normalizeVec3(viewVector);
-                        resultVector1 = VectorUtil.crossVec3(resultVector1, viewVector, upVector);
-                        System.out.println(viewVector[0] + ", " + viewVector[1] + ", " + viewVector[2]);
-//                        System.out.println(resultVector1[0] + ", " + resultVector1[1] + ", " + resultVector1[2]);
-                        resultVector1 = VectorUtil.normalizeVec3(
-                                resultVector1,
-                                resultVector1
-                        );
 
-                        resultVector2 = VectorUtil.scaleVec3(resultVector2, resultVector1, mouseSpeed*deltaMouseLocation.x);
+                        // Calculate translation as vectors
+                        // resultVector2 is the translation in right-vector direction
+                        resultVector2 = VectorUtil.scaleVec3(resultVector2, resultVector1, -mouseSpeed*deltaMouseLocation.x);
+                        // resultVector1 is the translation in up-vector direction
                         resultVector1 = VectorUtil.scaleVec3(resultVector1, upVector, mouseSpeed*deltaMouseLocation.y);
 
-//                        System.out.println(resultVector2[0] + ", " + resultVector2[1] + ", " + resultVector2[2]);
-
+                        // Translate both the cameraPosition as well as the lookAtPosition with the two resultVectors
                         cameraPosition = VectorUtil.addVec3(cameraPosition,
-                                resultVector2,
+                                cameraPosition,
                                 resultVector1
                         );
-                        lookAtPosition = VectorUtil.addVec3(cameraPosition,
-                                resultVector2,
+                        cameraPosition = VectorUtil.addVec3(cameraPosition,
+                                cameraPosition,
+                                resultVector2
+                        );
+
+                        lookAtPosition = VectorUtil.addVec3(lookAtPosition,
+                                lookAtPosition,
                                 resultVector1
+                        );
+                        lookAtPosition = VectorUtil.addVec3(lookAtPosition,
+                                lookAtPosition,
+                                resultVector2
                         );
                         break;
                     case MouseEvent.BUTTON3:
+                        // Movement in x direction rotates around up vector
 
+                        //TODO: Calculate Angle and rotate
+
+                        // Movement in y direction rotates around right-vector
                         break;
                 }
 
@@ -279,4 +292,47 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
 
         }
     }
+
+    private float[] rotVec(float[] vector, float[] rotationVector, float[] rotationPoint, float angle) {
+        if (vector.length != 3 || rotationVector.length != 3 || rotationPoint.length != 3) {
+            throw new IllegalArgumentException("Vectors or points have to have 3 dimensions");
+        }
+
+        float cosine = (float)Math.cos(angle), sine = (float)Math.sin(angle);
+
+        // Be sure to use only normalized vectors
+        float[] normRotationVector = new float[3],
+                resultVector = new float[3];
+        normRotationVector = VectorUtil.normalizeVec3(normRotationVector, rotationVector);
+
+        resultVector[0] = (float)(rotationPoint[0]*(pow(normRotationVector[1], 2)+pow(normRotationVector[2], 2))
+                - rotationVector[0]*(
+                        rotationPoint[1]*normRotationVector[1]+rotationPoint[2]*normRotationVector[2]
+                        -normRotationVector[0]*vector[0]-normRotationVector[1]*vector[1]-normRotationVector[2]*vector[2]
+                        ))*(1-cosine)
+                + vector[0]*cosine
+                + (-rotationPoint[2]*normRotationVector[1]+rotationPoint[1]*normRotationVector[2]
+                    -normRotationVector[2]*vector[1]+normRotationVector[1]*vector[2])*sine;
+
+        resultVector[1] = (float)(rotationPoint[1]*(pow(normRotationVector[0], 2)+pow(normRotationVector[2], 2))
+                - rotationVector[1]*(
+                        rotationPoint[0]*normRotationVector[0]+rotationPoint[2]*normRotationVector[2]
+                        -normRotationVector[0]*vector[0]-normRotationVector[1]*vector[1]-normRotationVector[2]*vector[2]
+                    ))*(1-cosine)
+                + vector[1]*cosine
+                + (rotationPoint[2]*normRotationVector[0]-rotationPoint[0]*normRotationVector[2]
+                    +normRotationVector[2]*vector[0]-normRotationVector[0]*vector[2])*sine;
+
+        resultVector[2] = (float)(rotationPoint[2]*(pow(normRotationVector[0], 2)+pow(normRotationVector[1], 2))
+                - rotationVector[2]*(
+                        rotationPoint[0]*normRotationVector[0]+rotationPoint[1]*normRotationVector[1]
+                        -normRotationVector[0]*vector[0]-normRotationVector[1]*vector[1]-normRotationVector[2]*vector[2]
+                    ))*(1-cosine)
+                + vector[2]*cosine
+                + (-rotationPoint[1]*normRotationVector[0]+rotationPoint[0]*normRotationVector[1]
+                    -normRotationVector[1]*vector[0]+normRotationVector[0]*vector[1])*sine;
+
+        return resultVector;
+    }
+
 }
