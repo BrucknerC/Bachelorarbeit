@@ -1,26 +1,54 @@
 package gravitysandbox.gui;
 
 import com.jogamp.opengl.util.FPSAnimator;
-import gravitysandbox.physics.BodyConainer;
+import gravitysandbox.physics.Body;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-//TODO: Documentation
-
 /**
+ * The main window for the simulation.
+ *
  * @version 1.1
  * @since 0.1
  */
 public class MainFrame extends JFrame {
 
-    private GravityCanvas gravityCanvas;
-    private FPSAnimator animator;
-    private JButton btnSimulate, btnDetails;
+    /**
+     * A flag showing whether the simulation is running or not.
+     */
+    private boolean simualtionRunnig;
 
+    /**
+     * The {@link GravityCanvas} in which the simulation will be rendered.
+     */
+    private GravityCanvas gravityCanvas;
+
+    /**
+     * The {@link FPSAnimator} used for continuously redrawing the {@link GravityCanvas}.
+     */
+    private FPSAnimator animator;
+
+    /**
+     * The {@link ToolPanel} where operations on the simulation can be performed.
+     */
+    private ToolPanel toolPanel;
+
+    /**
+     * The {@link MainMenuBar} displaying the menu bar.
+     */
+    private MainMenuBar menuBar;
+
+    /**
+     * Creates a new MainFrame and displays it.
+     */
     public MainFrame() {
+
+        menuBar = new MainMenuBar(this);
+
+        setJMenuBar(menuBar);
 
         setLayout(new BorderLayout());
 
@@ -30,46 +58,75 @@ public class MainFrame extends JFrame {
 
         animator = new FPSAnimator(gravityCanvas, 30);
         animator.setUpdateFPSFrames(60, System.out);
+        animator.start();
 
-        JPanel toolPanel = new JPanel();
-        toolPanel.setLayout(new BoxLayout(toolPanel,BoxLayout.Y_AXIS));
+        toolPanel = new ToolPanel(this);
 
-        btnSimulate = new JButton("Start");
-        btnSimulate.addActionListener(e -> btnSimulatePressed());
-
-        toolPanel.add(btnSimulate);
-
-        btnDetails = new JButton("Details");
-        btnDetails.addActionListener(e -> new DetailDialog(BodyConainer.getInstance().get(0)));
-
-        toolPanel.add(btnDetails);
-
-        add(toolPanel, BorderLayout.EAST);
+        add(toolPanel, BorderLayout.NORTH);
 
         setSize(700, 500);
+        setTitle("Gravity sandbox");
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                animator.stop();
-                dispose();
+                close();
             }
         });
         setVisible(true);
-
-        btnSimulatePressed();
 
         gravityCanvas.requestFocus();
 
     }
 
-    private void btnSimulatePressed() {
-        if (btnSimulate.getText().equals("Start")) {
-            btnSimulate.setText("Stopp");
-            animator.start();
-        } else {
-            btnSimulate.setText("Start");
-            animator.stop();
-        }
+    /**
+     * Stops the simulation if running. Otherwise it will be.
+     */
+    void toogleSimulation() {
+        gravityCanvas.setAnimationRunning(!simualtionRunnig);
+
+        toolPanel.updateStartButton();
+        menuBar.updateMenuItems();
+
+        simualtionRunnig = !simualtionRunnig;
     }
 
+    /**
+     * Update the MainFrame controls.
+     */
+    public void update() {
+        gravityCanvas.repaint();
+        toolPanel.updateComboBox();
+    }
+
+    /**
+     * Reset the camera of the {@link GravityCanvas} to default values.
+     */
+    void resetView() {
+        gravityCanvas.resetView();
+    }
+
+    /**
+     * Getter for simulationRunning flag.
+     *
+     * @return true if the simulation is running. false otherwise
+     */
+    boolean isSimualtionRunnig() {
+        return simualtionRunnig;
+    }
+
+    /**
+     * Closes this MainFrame.
+     */
+    void close() {
+        animator.stop();
+        dispose();
+    }
+
+    /**
+     * Returns the currently selected {@link Body} from the {@link ToolPanel}.
+     * @return the currently selected {@link Body}.
+     */
+    Body getSelectedBody() {
+        return toolPanel.getSelectedBody();
+    }
 }

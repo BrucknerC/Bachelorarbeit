@@ -6,8 +6,6 @@ import java.math.BigDecimal;
 
 import static java.math.RoundingMode.HALF_UP;
 
-//TODO:Documentation
-
 /**
  * Contains constants and functions for calculating physical formulas.
  *
@@ -30,18 +28,9 @@ public class Physics {
      * <p>
      * The representation of the astronomical unit, which is roughly the distance from the Earth to the Sun.<br/>
      * One AU is defined as 149,597,870,700.0 m.<br/>
-     * Source for value: http://www.iau.org/static/resolutions/IAU2012_English.pdf, page 1 (accessed 2017-02-28)
+     * Source for value: http://www.iau.org/static/resolutions/IAU2012_English.pdf, page 3 (accessed 2017-02-28)
      */
     public static final BigDecimal AU = new BigDecimal(149_597_870_700L);
-
-    /**
-     * One parsec
-     * <p>
-     * The representation of the parsec, which is is the distance at which one astronomical unit subtends an angle of one arcsecond.<br/>
-     * One pc is defined as 648000/PI * 1 AU.<br/>
-     * Source for value: https://www.iau.org/public/themes/measuring/ (accessed 2017-02-28)
-     */
-    public static final BigDecimal pc = new BigDecimal("3.08567758149137E16");
 
     /**
      * Calculates the gravitational acceleration for one Body.
@@ -51,18 +40,19 @@ public class Physics {
      * <p>
      * The acceleration is calculated with a fourth order Runge-Kutta method to improve the accuracy.
      *
-     * @param body1     The body for which the acceleration is calculated.
+     * @param body1 The body for which the acceleration is calculated.
      * @param body2 The speed of the simulation.
      * @return The gravitational acceleration represented as a {@link Vector3D}.
      */
-    public static Vector3D calculateGravitationalAcceleration(Body body1, Body body2) {
+    public static Vector3D calculateGravitationalForce(Body body1, Body body2) {
 
         BigDecimal tmp, cubedDistance;
         cubedDistance = ((body2.getPosition().subtract(body1.getPosition())).length()).pow(3);
-        tmp = G.multiply(body1.getMass()).multiply(body2.getMass());
-        tmp = tmp.divide(cubedDistance, cubedDistance.scale() - tmp.scale(), HALF_UP);
-        return(body2.getPosition().subtract(body1.getPosition())).scale(tmp);
-
-
+        if (!body1.equals(body2) && cubedDistance.compareTo(BigDecimal.ZERO)!=0) {
+            tmp = G.multiply(body1.getMass()).multiply(body2.getMass());
+            tmp = tmp.divide(cubedDistance, cubedDistance.scale() - tmp.scale(), HALF_UP);
+            return (body2.getPosition().subtract(body1.getPosition())).scale(tmp);
+        } else
+            return new Vector3D();
     }
 }

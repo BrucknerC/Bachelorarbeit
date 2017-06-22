@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<system>
+    <body name="Sol" mass="1.9884E30" isStar="true">
+        <position>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+        </position>
+        <velocity>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+        </velocity>
+    </body>
+    <body name="Mercury" mass="3.3011E23" isStar="false">
+        <position>
+            <x>42360212204</x>
+            <y>-17983542857</y>
+            <z>5609920151</z>
+        </position>
+        <velocity>
+            <x>18506</x>
+            <y>43597</y>
+            <z>0</z>
+        </velocity>
+    </body>
+    <body name="Venus" mass="4.8675E24" isStar="false">
+        <position>
+            <x>94042457447</x>
+            <y>52126390699</y>
+            <z>6364433159</z>
+        </position>
+        <velocity>
+            <x>-16978</x>
+            <y>30629</y>
+            <z>0</z>
+        </velocity>
+    </body>
+    <body name="Earth" mass="5.972E25" isStar="false">
+        <position>
+            <x>147.0547068981E9</x>
+            <y>0</y>
+            <z>0</z>
+        </position>
+        <velocity>
+            <x>0</x>
+            <y>30.3E3</y>
+            <z>0</z>
+        </velocity>
+    </body>
+    <body name="Mars" mass="6.4171E23" isStar="false">
+        <position>
+            <x>-124406008148</x>
+            <y>-165116944369</y>
+            <z>-6672065033</z>
+        </position>
+        <velocity>
+            <x>19229</x>
+            <y>-14490</y>
+            <z>0</z>
+        </velocity>
+    </body>
+    <body name="Jupiter" mass="1.899E27" isStar="false">
+        <position>
+            <x>-12959674758</x>
+            <y>-740552843347</y>
+            <z>-16844720240</z>
+        </position>
+        <velocity>
+            <x>13070</x>
+            <y>0</y>
+            <z>0</z>
+        </velocity>
+    </body>
+    <body name="Saturn" mass="5.6836E26" isStar="false">
+        <position>
+            <x>1.30947205E12</x>
+            <y>-326693026770</y>
+            <z>-58537646804</z>
+        </position>
+        <velocity>
+            <x>2344</x>
+            <y>9402</y>
+            <z>0</z>
+        </velocity>
+    </body>
+    <body name="Uranus" mass="8.6810E25" isStar="false">
+        <position>
+            <x>1.028298364E12</x>
+            <y>2.541953555E12</y>
+            <z>-36995553424</z>
+        </position>
+        <velocity>
+            <x>-6305</x>
+            <y>2547</y>
+            <z>0</z>
+        </velocity>
+    </body>
+    <body name="Neptune" mass="1.0243E26" isStar="false">
+        <position>
+            <x>1.815021598E12</x>
+            <y>-4.075994449E12</y>
+            <z>-137585161682</z>
+        </position>
+        <velocity>
+            <x>4960</x>
+            <y>2208</y>
+            <z>0</z>
+        </velocity>
+    </body>
+</system>

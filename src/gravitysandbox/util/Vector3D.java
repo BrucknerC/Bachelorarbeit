@@ -1,11 +1,8 @@
 package gravitysandbox.util;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import static java.math.RoundingMode.HALF_UP;
-
-// TODO: Documentation
 
 /**
  * A three dimensional vector using {@link BigDecimal} for arbitrary precision values with support for the most common vector operations.
@@ -35,7 +32,7 @@ public class Vector3D {
      * Creates a new instance of Vector3D with value of (0, 0, 0).
      */
     public Vector3D() {
-        this.x = this.y = this.z = new BigDecimal(BigInteger.ZERO);
+        this.x = this.y = this.z = BigDecimal.ZERO;
     }
 
     /**
@@ -52,23 +49,17 @@ public class Vector3D {
     }
 
     /**
-     * Calculates the vector or cross product of this and given vector.
+     * Creates a new instance of Vector3D with the given values.
+     * The {@link String} objects will be parsed by the {@link BigDecimal} constructor and set as the coordinates.
      *
-     * @param vector The second vector for the vector product.
-     * @return The cross product vector.
+     * @param x The x component of the vector.
+     * @param y The y component of the vector.
+     * @param z The z component of the vector.
      */
-    public Vector3D vectorProduct(Vector3D vector) {
-        return new Vector3D(
-                y.multiply(vector.getZ()).subtract(
-                        z.multiply(vector.getY())
-                ).setScale(z.scale() > vector.getY().scale() ? vector.getY().scale() : z.scale(), HALF_UP),
-                z.multiply(vector.getX()).subtract(
-                        x.multiply(vector.getZ())
-                ).setScale(x.scale() > vector.getZ().scale() ? vector.getZ().scale() : x.scale(), HALF_UP),
-                x.multiply(vector.getY()).subtract(
-                        y.multiply(vector.getX())
-                ).setScale(y.scale() > vector.getX().scale() ? vector.getX().scale() : y.scale(), HALF_UP)
-        );
+    public Vector3D(String x, String y, String z) {
+        this.x = new BigDecimal(x);
+        this.y = new BigDecimal(y);
+        this.z = new BigDecimal(z);
     }
 
     /**
@@ -97,21 +88,6 @@ public class Vector3D {
     }
 
     /**
-     * Calculates the scalar product of this and given vector.
-     *
-     * @param vector The second vector for the scalar product.
-     * @return The value of the scalar product.
-     */
-    public BigDecimal scalarProduct(Vector3D vector) {
-        return x.multiply(vector.getX()).add(
-                y.multiply(vector.getY()).add(
-                        z.multiply(vector.getZ())
-                )
-        );
-
-    }
-
-    /**
      * Calculates the length of the vector.
      *
      * @return The length of the vector.
@@ -119,18 +95,6 @@ public class Vector3D {
     public BigDecimal length() {
         return BigDecimalMath.sqrt(
                 x.pow(2).add(y.pow(2)).add(z.pow(2))
-        );
-    }
-
-    /**
-     * Scales the vector to a length of 1.
-     */
-    public Vector3D unify() {
-        BigDecimal length = length();
-        return new Vector3D(
-                x.divide(length, x.scale() - length.scale(), HALF_UP),
-                y.divide(length, y.scale() - length.scale(), HALF_UP),
-                z.divide(length, z.scale() - length.scale(), HALF_UP)
         );
     }
 
@@ -201,21 +165,31 @@ public class Vector3D {
         return z;
     }
 
-    public Vector3D stripTrailingZeros() {
-        return new Vector3D(x.stripTrailingZeros(),
-                y.stripTrailingZeros(),
-                z.stripTrailingZeros()
-        );
-    }
-
+    /**
+     * Retrieve the minimum scale of the {@link BigDecimal} coordinates.
+     *
+     * @return The minimum scale.
+     */
     public int getBDScale() {
         return BigDecimalMath.minScale(x, y, z);
     }
 
+    /**
+     * Returns a {@link String} representation of the vector.
+     *
+     * @return The vector as a {@link String}.
+     */
     @Override
     public String toString() {
         return this.x + ", " + this.y + ", " + this.z;
     }
 
-    public String toEngineeringString() {return "(" + this.x.toEngineeringString() + ", " + this.y.toEngineeringString() + ", " + this.z.toEngineeringString() + ")";}
+    /**
+     * Returns a {@link String} representation of the vector using a engineering notation, i.e. using exponent that are multiples of 3, etc.
+     *
+     * @return The vector as an engineering {@link String}.
+     */
+    public String toEngineeringString() {
+        return "(" + this.x.toEngineeringString() + ", " + this.y.toEngineeringString() + ", " + this.z.toEngineeringString() + ")";
+    }
 }
