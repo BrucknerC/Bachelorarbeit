@@ -1,19 +1,16 @@
 package gravitysandbox.physics;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Observable;
-
 import gravitysandbox.util.Vector3D;
 
-// TODO: Documentation
+import java.math.BigDecimal;
+import java.util.LinkedList;
+import java.util.Observable;
 
 /**
  * The representation of a physical body with its name, position, velocity and mass.
  *
  * @author Christoph Bruckner
- * @version 1.1
+ * @version 1.3
  * @since 0.1
  */
 public class Body extends Observable {
@@ -34,6 +31,11 @@ public class Body extends Observable {
     private Vector3D velocity;
 
     /**
+     * The current acceleration of the body
+     */
+    private Vector3D acceleration;
+
+    /**
      * A list of previous locations.
      */
     private LinkedList<Vector3D> previousLocations;
@@ -44,18 +46,25 @@ public class Body extends Observable {
     private BigDecimal mass;
 
     /**
+     * Determines if the body emits light.
+     */
+    private boolean isStar;
+
+    /**
      * Creates a new Body object based on given starting position, velocity and mass.
      * @param name The starting name.
      * @param position The starting position.
      * @param velocity The starting velocity.
      * @param mass The starting mass.
      */
-    public Body(String name, Vector3D position, Vector3D velocity, BigDecimal mass) {
+    public Body(String name, Vector3D position, Vector3D velocity, BigDecimal mass, boolean isStar) {
         previousLocations = new LinkedList<>();
+        acceleration = new Vector3D();
         setName(name);
         this.position=position;
         setVelocity(velocity);
         setMass(mass);
+        setStar(isStar);
     }
 
     /**
@@ -97,6 +106,22 @@ public class Body extends Observable {
     }
 
     /**
+     * Getter for acceleration.
+     * @return The current acceleration of the body.
+     */
+    public Vector3D getAcceleration() {
+        return acceleration;
+    }
+
+    /**
+     * Setter for acceleration.
+     * @param acceleration The new value for the acceleration of the body.
+     */
+    public void setAcceleration(Vector3D acceleration) {
+        this.acceleration = acceleration;
+    }
+
+    /**
      * Getter for mass.
      * @return The current mass of the body.
      */
@@ -132,6 +157,28 @@ public class Body extends Observable {
         notifyObservers();
     }
 
+    /**
+     * Getter for isStar
+     * @return The current value for isStar.
+     */
+    public boolean isStar() {
+        return isStar;
+    }
+
+    /**
+     * Setter for isStar
+     * @param star The new value for isStar.
+     */
+    public void setStar(boolean star) {
+        this.isStar = star;
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
+     * Adds a location represented by a {@link Vector3D} to the list of previous locations.
+     * @param location the new location.
+     */
     private void addPreviousLocation(Vector3D location) {
         if (previousLocations.size()>=250) {
             previousLocations.removeFirst();
@@ -139,8 +186,20 @@ public class Body extends Observable {
         previousLocations.add(previousLocations.size(), location);
     }
 
+    /**
+     * Returns the list of previous locations.
+     * @return The list.
+     */
     public LinkedList<Vector3D> getPreviousLocations() {
         return previousLocations;
     }
 
+    /**
+     * Returns the name as a {@link String} representation of the body.
+     * @return The name of the body.
+     */
+    @Override
+    public String toString() {
+        return name;
+    }
 }

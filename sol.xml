@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<system>
+    <body name="Sol" mass="1.9884E30" isStar="true">
+        <position>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+        </position>
+        <velocity>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+        </velocity>
+    </body>
+    <body name="Erde" mass="5.972E25" isStar="false">
+        <position>
+            <x>147.0547068981E9</x>
+            <y>0</y>
+            <z>0</z>
+        </position>
+        <velocity>
+            <x>0</x>
+            <y>30.3E3</y>
+            <z>0</z>
+        </velocity>
+    </body>
+    <body name="Jupiter" mass="1.899E27" isStar="false">
+        <position>
+            <x>-803.340565659E9</x>
+            <y>0</y>
+            <z>0</z>
+        </position>
+        <velocity>
+            <x>0</x>
+            <y>-13.07E3</y>
+            <z>0</z>
+        </velocity>
+    </body>
+</system>

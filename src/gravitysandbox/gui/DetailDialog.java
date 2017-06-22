@@ -14,7 +14,7 @@ import java.util.Observer;
  *
  * The body's current name, mass, position and velocity will be displayed.
  * @author Christoph Bruckner
- * @version 1.0
+ * @version 1.1
  * @since 0.3
  */
 public class DetailDialog extends JDialog implements Observer {
@@ -22,8 +22,12 @@ public class DetailDialog extends JDialog implements Observer {
     private Body observedBody;
     private JLabel lblName, lblMass, lblPosition, lblVelocity;
 
-    public DetailDialog(Body body) {
-        super();
+    /**
+     * TODO Documentation
+     * @param body
+     */
+    public DetailDialog(MainFrame parent, Body body) {
+        super(parent);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -54,6 +58,8 @@ public class DetailDialog extends JDialog implements Observer {
         add(lblVelocity);
 
         pack();
+        setLocation(getOwner().getLocation().x + (getOwner().getSize().width - getSize().width) / 2,
+                getOwner().getLocation().y + (getOwner().getSize().height - getSize().height) / 2);
         setVisible(true);
 
     }

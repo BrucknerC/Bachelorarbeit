@@ -1,7 +1,6 @@
 package gravitysandbox.gui;
 
 import com.jogamp.opengl.util.FPSAnimator;
-import gravitysandbox.physics.BodyConainer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,11 +15,17 @@ import java.awt.event.WindowEvent;
  */
 public class MainFrame extends JFrame {
 
+    private boolean simualtionRunnig;
     private GravityCanvas gravityCanvas;
     private FPSAnimator animator;
-    private JButton btnSimulate, btnDetails;
+    private ToolPanel toolPanel;
+    private MainMenuBar menuBar;
 
     public MainFrame() {
+
+        menuBar = new MainMenuBar(this);
+
+        setJMenuBar(menuBar);
 
         setLayout(new BorderLayout());
 
@@ -30,46 +35,49 @@ public class MainFrame extends JFrame {
 
         animator = new FPSAnimator(gravityCanvas, 30);
         animator.setUpdateFPSFrames(60, System.out);
+        animator.start();
 
-        JPanel toolPanel = new JPanel();
-        toolPanel.setLayout(new BoxLayout(toolPanel,BoxLayout.Y_AXIS));
+        toolPanel = new ToolPanel(this);
 
-        btnSimulate = new JButton("Start");
-        btnSimulate.addActionListener(e -> btnSimulatePressed());
-
-        toolPanel.add(btnSimulate);
-
-        btnDetails = new JButton("Details");
-        btnDetails.addActionListener(e -> new DetailDialog(BodyConainer.getInstance().get(0)));
-
-        toolPanel.add(btnDetails);
-
-        add(toolPanel, BorderLayout.EAST);
+        add(toolPanel, BorderLayout.NORTH);
 
         setSize(700, 500);
+        setTitle("Gravity sandbox");
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                animator.stop();
-                dispose();
+                close();
             }
         });
         setVisible(true);
-
-        btnSimulatePressed();
 
         gravityCanvas.requestFocus();
 
     }
 
-    private void btnSimulatePressed() {
-        if (btnSimulate.getText().equals("Start")) {
-            btnSimulate.setText("Stopp");
-            animator.start();
-        } else {
-            btnSimulate.setText("Start");
-            animator.stop();
-        }
+    void toogleSimulation() {
+        gravityCanvas.setAnimationRunning(!simualtionRunnig);
+
+        toolPanel.updateStartButton();
+        menuBar.updateMenuItems();
+
+        simualtionRunnig = !simualtionRunnig;
     }
 
+    public void update() {
+        gravityCanvas.repaint();
+    }
+
+    void resetView() {
+        gravityCanvas.resetView();
+    }
+
+    boolean isSimualtionRunnig() {
+        return simualtionRunnig;
+    }
+
+    void close() {
+        animator.stop();
+        dispose();
+    }
 }
