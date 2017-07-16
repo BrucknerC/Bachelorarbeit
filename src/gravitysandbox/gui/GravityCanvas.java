@@ -42,7 +42,7 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
     private float upVector[] = {0, 1, 0};
     private int mouseButton;
     private boolean animationRunning;
-    private OcTree ocTree;
+    //private OcTree ocTree;
 
     GravityCanvas() {
         super();
@@ -143,7 +143,7 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
         savedMouseLocation = new Point();
         mouseSpeed = 0.01f;
         animationRunning = false;
-        ocTree = new OcTree();
+        //ocTree = new OcTree();
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -302,6 +302,7 @@ public class GravityCanvas extends GLCanvas implements GLEventListener {
         Vector3D gravForce;
         Vector3D frontLowerLeft = new Vector3D();
         Vector3D backUpperRight = new Vector3D();
+        OcTree ocTree = new OcTree();
 
         for (Body body : bodyContainer) {
             if (body.getPosition().getX().compareTo(frontLowerLeft.getX())<0) {

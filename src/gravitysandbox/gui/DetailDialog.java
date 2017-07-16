@@ -75,6 +75,9 @@ public class DetailDialog extends JDialog implements Observer {
      */
     @Override
     public void update(Observable o, Object arg) {
+        if (arg != null && arg instanceof String && arg.equals("DELETE"))
+            dispose();
+
         lblName.setText(observedBody.getName());
         lblMass.setText(observedBody.getMass().toEngineeringString() + " kg");
         lblPosition.setText(observedBody.getPosition().toEngineeringString() + " m");

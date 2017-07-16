@@ -36,8 +36,8 @@ public class OcTree {
      * @param backUpperRight The second corner point to specify the boundary.
      */
     public void buildTree(Vector3D frontLowerLeft, Vector3D backUpperRight) {
-        if (rootNode != null)
-            resetTree();
+        //if (rootNode != null)
+        //    resetTree();
         rootNode = new OcTreeNode(frontLowerLeft, backUpperRight);
 
         for (Body body : BodyContainer.getInstance()) {
@@ -245,7 +245,7 @@ public class OcTree {
                         centerOfMass = centerOfMass.add(oct.centerOfMass.scale(oct.mass));
                     }
                 }
-                centerOfMass = centerOfMass.scale(BigDecimal.ONE.divide(mass, -mass.scale() * centerOfMass.getBDScale(), RoundingMode.HALF_UP));
+                centerOfMass = centerOfMass.scale(BigDecimal.ONE.divide(mass, 50, RoundingMode.HALF_UP));
             }
         }
 
@@ -262,10 +262,10 @@ public class OcTree {
             if (numberOfBodies == 1) {
                 force = Physics.calculateGravitationalForce(targetBody, existingParticle);
             } else {
-                BigDecimal r = centerOfMass.subtract(targetBody.getPosition()).length().abs();
-                BigDecimal d = frontLowerLeft.subtract(backUpperRight).length().abs();
+                BigDecimal r = centerOfMass.subtract(targetBody.getPosition()).length();
+                BigDecimal d = frontLowerLeft.subtract(backUpperRight).length();
 
-                if (r.compareTo(BigDecimal.ZERO) != 0 && d.divide(r, 10 * (d.scale() - r.scale()), RoundingMode.HALF_UP).compareTo(THETA) < 0) {
+                if (r.compareTo(BigDecimal.ZERO) != 0 && d.divide(r, 50, RoundingMode.HALF_UP).compareTo(THETA) < 0) {
                     Body tmp = new Body("", centerOfMass, null, mass, false);
                     force = Physics.calculateGravitationalForce(targetBody, tmp);
                 } else {

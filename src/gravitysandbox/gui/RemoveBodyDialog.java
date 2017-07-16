@@ -46,9 +46,13 @@ public class RemoveBodyDialog extends JDialog {
 
         btnOK = new JButton("Remove");
         btnOK.addActionListener(e -> {
-            bodies.remove((Body) cmbxBodies.getSelectedItem());
-            ((MainFrame) getOwner()).update();
-            dispose();
+                Body selectedBody = (Body) cmbxBodies.getSelectedItem();
+                if (selectedBody != null) {
+                    selectedBody.setDeleted();
+                    bodies.remove(selectedBody);
+                    cmbxBodies.removeItem(selectedBody);
+                    ((MainFrame) getOwner()).update();
+                }
         });
         add(btnOK);
 

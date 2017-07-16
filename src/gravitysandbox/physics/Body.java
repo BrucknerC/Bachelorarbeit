@@ -202,4 +202,12 @@ public class Body extends Observable {
     public String toString() {
         return name;
     }
+
+    /**
+     * Notify all observers that this object will be deleted.
+     */
+    public void setDeleted(){
+        setChanged();
+        notifyObservers("DELETE");
+    }
 }

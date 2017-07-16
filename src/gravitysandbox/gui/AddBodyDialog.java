@@ -35,20 +35,37 @@ class AddBodyDialog extends BodyDialog {
     @Override
     protected void positiveButtonClicked() throws IllegalArgumentException {
         if (parseInput()) {
-            BodyContainer.getInstance().add(new Body(txtName.getText(),
-                            new Vector3D(new BigDecimal(txtPositionX.getText()),
-                                    new BigDecimal(txtPositionY.getText()),
-                                    new BigDecimal(txtPositionZ.getText())),
-                            new Vector3D(new BigDecimal(txtVelocityX.getText()),
-                                    new BigDecimal(txtVelocityY.getText()),
-                                    new BigDecimal(txtVelocityZ.getText())),
-                            new BigDecimal(txtMass.getText()),
-                            chbxIsStar.isSelected()
-                    )
-            );
+            boolean positionFlag = false;
+            Vector3D position = new Vector3D(
+                    new BigDecimal(txtPositionX.getText()),
+                    new BigDecimal(txtPositionY.getText()),
+                    new BigDecimal(txtPositionZ.getText()));
+            for (Body body : BodyContainer.getInstance()) {
+                positionFlag = positionFlag || (position.getX().compareTo(body.getPosition().getX()) == 0
+                        && position.getY().compareTo(body.getPosition().getY()) == 0
+                        && position.getZ().compareTo(body.getPosition().getZ()) == 0);
 
-            ((MainFrame) getOwner()).update();
-            dispose();
+
+            }
+            if (positionFlag) {
+                JOptionPane.showMessageDialog(this,
+                        "Two bodies can't be in the same position!",
+                        "Error adding body",
+                        JOptionPane.ERROR_MESSAGE);
+            } else {
+                BodyContainer.getInstance().add(new Body(txtName.getText(),
+                                position,
+                                new Vector3D(new BigDecimal(txtVelocityX.getText()),
+                                        new BigDecimal(txtVelocityY.getText()),
+                                        new BigDecimal(txtVelocityZ.getText())),
+                                new BigDecimal(txtMass.getText()),
+                                chbxIsStar.isSelected()
+                        )
+                );
+
+                ((MainFrame) getOwner()).update();
+                dispose();
+            }
         }
     }
 }

@@ -1,0 +1,20 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="Bachelorarbeit:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Bachelorarbeit_jar</output-path>
+    <root id="root">
+      <element id="archive" name="Gravity Sandbox.jar">
+        <element id="module-output" name="Bachelorarbeit" />
+        <element id="dir-copy" path="$PROJECT_DIR$/res" />
+      </element>
+      <element id="directory" name="libs">
+        <element id="library" level="project" name="jdom-2.0.6" />
+        <element id="library" level="project" name="JOGL" />
+      </element>
+      <element id="directory" name="res">
+        <element id="file-copy" path="$PROJECT_DIR$/res/pause.png" />
+        <element id="file-copy" path="$PROJECT_DIR$/res/play.png" />
+      </element>
+      <element id="file-copy" path="$PROJECT_DIR$/sol.xml" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Class-Path: libs/gluegen-rt.jar libs/jogl-all.jar libs/gluegen-rt-nati
+ ves-amd64.jar libs/gluegen-rt-natives-i586.jar libs/jogl-all-natives-
+ amd64.jar libs/jogl-all-natives-i586.jar libs/jdom-2.0.6.jar
+Main-Class: gravitysandbox.Init
+

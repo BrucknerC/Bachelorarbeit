@@ -72,7 +72,10 @@ public class ToolPanel extends JPanel {
         add(cmbxBodies);
 
         btnDetails = new JButton("Details");
-        btnDetails.addActionListener(e -> new DetailDialog(parent, (Body)cmbxBodies.getSelectedItem()));
+        btnDetails.addActionListener(e -> {
+            if (getSelectedBody() != null)
+                new DetailDialog(parent, getSelectedBody());
+        });
 
         add(btnDetails);
 
